@@ -28,7 +28,6 @@ First, run the following command from the root:
 
 ```
 python3 indexing.py --run_path ./data/runs/run.trec2019-bm25.res
-
 ```
 If you have a gpu with big memory, you can set `--batch_size` that suits your gpu the best.
 
@@ -46,7 +45,6 @@ Let‘s first check out what is the BM25 performance on TREC DL2019 with [trec_e
 
 ```
 trec_eval -m ndcg_cut.10 -m map ./data/qrels/2019qrels-pass.txt ./data/runs/run.trec2019-bm25.res
-
 ```
 we get:
 
@@ -98,8 +96,7 @@ trec_eval -m ndcg_cut.10 -m map ./data/qrels/2019qrels-pass.txt ./data/runs/TILD
 ```
 map                     all     0.4204
 ndcg_cut_10             all     0.6088
-
 ```
 
 ## To train TILDE
-To be avalible soon
+To be available soon
