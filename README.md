@@ -3,7 +3,7 @@ This is the official repository for the SIGIR2021 paper "TILDE: Term Independent
 
 For details about this paper, check out our [website](http://ielab.io/publications/arvin-2021-TILDE).
 
-TILDE now is on huggingface model hub, you can directly download and use it by:
+TILDE now is on huggingface model hub. You can directly download and use it by typing in your Python code:
 
 ```
 from transformers import BertLMHeadModel, BertTokenizerFast
@@ -12,7 +12,7 @@ model = BertLMHeadModel.from_pretrained("ielab/TILDE")
 tokenizer = BertTokenizerFast.from_pretrained('bert-base-uncased')
 ```
 
-## Prepare environment and the data folder
+## Prepare environment and data folder
 We use [huggingface](https://huggingface.co/) implementation of BERT and [pytorch-lightning](https://www.pytorchlightning.ai/) to train TILDE. run `pip install -r requirements.txt` in the root folder to set up the libraries that will be used in this repo.
 
 To repoduce the results presented in the paper, you need to download `collection.tar.gz` from MS MARCO passage ranking repo with this [link](https://msmarco.blob.core.windows.net/msmarcoranking/collection.tar.gz). Unzip and put `collection.tsv` into the folder `./data`.
