@@ -71,6 +71,8 @@ def main(args):
 
         ranking_start = timer()
         for rank, docid in enumerate(docids):
+            if rank == args.cut_off:
+                break
             passage_log_probs, passage_token_id = doc_embeddings[docid]
             target_log_probs = passage_log_probs[cleaned_query_token_ids]
             score = np.sum(target_log_probs)
@@ -97,6 +99,14 @@ def main(args):
         for i in range(num_docs):
             score, docid = sorted_pairs[i]
             lines.append(str(qid) + " " + "Q0" + " " + str(docid) + " " + str(i + 1) + " " + str(score) + " " + f"alpha{args.alpha}" + "\n")
+            last_score = score
+            last_rank = i
+        # add the rest of ranks below cut_off, we don't need to re-rank them.
+        for docid in docids[num_docs:]:
+            last_score -= 1
+            last_rank += 1
+            lines.append(str(qid) + " " + "Q0" + " " + str(docid) + " " + str(last_rank + 1) + " " + str(
+                    last_score) + " " + f"alpha{args.alpha}" + "\n")
 
     print("Query processing time: %.1f ms" % (1000 * total_tokenizer_time / len(run.keys())))
     print("passage re-ranking time: %.1f ms" % (1000 * total_ranking_time / len(run.keys())))
@@ -111,6 +121,7 @@ if __name__ == '__main__':
     parser.add_argument("--index_path", type=str, required=True)
     parser.add_argument("--query_path", type=str, required=True)
     parser.add_argument("--alpha", type=float, default=1)
+    parser.add_argument("--cut_off", type=int, default=1000)
     parser.add_argument("--ckpt_path", type=str, default="ielab/TILDE")
     parser.add_argument("--collection_path", type=str, default="./data/collection.tsv")
     parser.add_argument("--output_path", type=str, default="./data/runs/")
