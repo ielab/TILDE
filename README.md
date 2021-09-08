@@ -107,6 +107,10 @@ trec_eval -m ndcg_cut.10 -m map ./data/qrels/2019qrels-pass.txt ./data/runs/TILD
 map                     all     0.4204
 ndcg_cut_10             all     0.6088
 ```
+## Passage expansion with TILDE
+Instructions to do passage expansion with our TILDE model that described in the paper: [Fast Passage Re-ranking with Contextualized Exact Term
+Matching and Efficient Passage Expansion.](https://arxiv.org/pdf/2108.08513)
+To be available soon
 
 ## To train TILDE
 To be available soon
