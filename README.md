@@ -1,12 +1,6 @@
 # TILDE
 This is the official repository for the SIGIR2021 paper [TILDE: Term Independent Likelihood moDEl for Passage Re-ranking](http://ielab.io/publications/arvin-2021-TILDE).
 
-## Updates
-- 13/09/2021 Release the reproducing of uniCOIL with [TILDE passage expansion](#passage-expansion-with-tilde) and add [TILDEv2](TILDEv2) folder.
-
-
---
-
 
 TILDE now is on huggingface model hub. You can directly download and use it by typing in your Python code:
 
@@ -22,6 +16,9 @@ As you see, TILDE is a `BertLMHeadModel`, you may get a warning from `transforme
 If you want to use `BertLMHeadModel` as a standalone, add `is_decoder=True`.
 ```
 Please ignore this warning, because we indeed will use TILDE as a standalone but still treat it as a transformer encoder.
+
+## Updates
+- 13/09/2021 Release the reproducing of uniCOIL with [TILDE passage expansion](#passage-expansion-with-tilde) and add [TILDEv2](TILDEv2) folder.
 
 ## Prepare environment and data folder
 To train and inference TILDE, we use python3.7, the [huggingface](https://huggingface.co/) implementation of BERT and [pytorch-lightning](https://www.pytorchlightning.ai/). 
