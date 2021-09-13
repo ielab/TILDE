@@ -1,7 +1,12 @@
 # TILDE
-This is the official repository for the SIGIR2021 paper "TILDE: Term Independent Likelihood moDEl for Passage Re-ranking"
+This is the official repository for the SIGIR2021 paper [TILDE: Term Independent Likelihood moDEl for Passage Re-ranking](http://ielab.io/publications/arvin-2021-TILDE).
 
-For details about this paper, check out our [website](http://ielab.io/publications/arvin-2021-TILDE).
+## Updates
+- 13/09/2021 Release the reproducing of uniCOIL with [TILDE passage expansion](#passage-expansion-with-tilde) and add [TILDEv2](TILDEv2) folder.
+
+
+--
+
 
 TILDE now is on huggingface model hub. You can directly download and use it by typing in your Python code:
 
@@ -110,7 +115,9 @@ ndcg_cut_10             all     0.6088
 ## Passage expansion with TILDE
 Instructions to do passage expansion with our TILDE model that described in the paper: [Fast Passage Re-ranking with Contextualized Exact Term
 Matching and Efficient Passage Expansion.](https://arxiv.org/pdf/2108.08513)
-To be available soon
+To be available soon.
+
+To reporduce the uniCOIL results with TILDE passage expansion, we refer to [pyserini](https://github.com/castorini/pyserini/blob/master/docs/experiments-unicoil-tilde-expansion.md) and [anserini](https://github.com/castorini/anserini/blob/master/docs/experiments-msmarco-passage-unicoil-tilde-expansion.md) examples.
 
 ## To train TILDE
 To be available soon
