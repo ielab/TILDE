@@ -146,7 +146,7 @@ if __name__ == "__main__":
                                                               'NOTE: this is the number before filtering out expanded tokens that already in the original document')
     parser.add_argument('--batch_size', default=256, type=int)
     parser.add_argument('--num_workers', default=8, type=int)
-    parser.add_argument('--store_raw', action='store_true', help="True if you want to store expanded raw test. False if you want to expanded store token ids.")
+    parser.add_argument('--store_raw', action='store_true', help="True if you want to store expanded raw text. False if you want to expanded store token ids.")
     args = parser.parse_args()
     import os
 
