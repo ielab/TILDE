@@ -8,6 +8,7 @@ from tqdm import tqdm
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 import numpy as np
+import os
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
@@ -51,12 +52,6 @@ class MarcoEncodeDataset(Dataset):
         self.p_max_len = p_max_len
         self.passages = []
         self.pids = []
-        # with open(path, 'rt') as fin:
-        #     lines = fin.readlines()
-        #     for line in tqdm(lines):
-        #         jcontent = json.loads(line)
-        #         self.passages.append(jcontent['passage'])
-        #         self.pids.append(jcontent['pid'])
 
         with open(path, 'rt') as fin:
             lines = fin.readlines()
@@ -87,7 +82,7 @@ def main(args):
     model = BertLMHeadModel.from_pretrained("ielab/TILDE", cache_dir='./cache')
     tokenizer = BertTokenizer.from_pretrained('bert-base-uncased', use_fast=True, cache_dir='./cache')
     model.eval().to(DEVICE)
-    with open(f'{args.output_dir}/collection_TILDE_expanded.jsonl', 'w+') as wf:
+    with open(f"{os.path.dirname(args.corpus_path)}/collection-tilde-expanded-top{args.topk}.jsonl", 'w+') as wf:
         _, bad_ids = clean_vacab(tokenizer)
 
         encode_dataset = MarcoEncodeDataset(args.corpus_path, tokenizer)
@@ -120,15 +115,10 @@ def main(args):
                 expansions.append(expand_term_ids)
 
             for ind, passage_input_id in enumerate(passage_input_ids):
+                passage_input_id = passage_input_id[passage_input_id != 0][1:]  # skip the first special token
+                expanded_passage = np.append(passage_input_id, expansions[ind]).tolist()
                 if args.store_raw:
-                    original_terms = tokenizer.decode(passage_input_id[1:], skip_special_tokens=True)
-                    expanded_terms = tokenizer.decode(expansions[ind], skip_special_tokens=True)
-                    expanded_passage = original_terms + tokenizer.sep_token + expanded_terms
-                else:
-                    passage_input_id = list(passage_input_id)[1:]
-                    passage_input_id = list(filter(lambda a: a != 0, passage_input_id))
-                    passage_input_id.extend(list(expansions[ind]))
-                    expanded_passage = [int(i) for i in passage_input_id]
+                    expanded_passage = tokenizer.decode(expanded_passage)[1:-1]  # skip the first and the last special token, note: we keep the [SEP] token.
 
                 temp = {
                     "pid": pids[COUNTER],
@@ -140,7 +130,6 @@ def main(args):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument('--output_dir', required=True)
     parser.add_argument('--corpus_path', required=True)
     parser.add_argument('--topk', default=128, type=int, help='k tokens with highest likelihood to be expanded to the original document. '
                                                               'NOTE: this is the number before filtering out expanded tokens that already in the original document')
@@ -148,8 +137,5 @@ if __name__ == "__main__":
     parser.add_argument('--num_workers', default=8, type=int)
     parser.add_argument('--store_raw', action='store_true', help="True if you want to store expanded raw text. False if you want to expanded store token ids.")
     args = parser.parse_args()
-    import os
 
-    if not os.path.exists(args.output_dir):
-        os.makedirs(args.output_dir)
     main(args)
