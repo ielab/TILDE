@@ -117,8 +117,9 @@ def main(args):
             for ind, passage_input_id in enumerate(passage_input_ids):
                 passage_input_id = passage_input_id[passage_input_id != 0][1:]  # skip the first special token
                 expanded_passage = np.append(passage_input_id, expansions[ind]).tolist()
+
                 if args.store_raw:
-                    expanded_passage = tokenizer.decode(expanded_passage)[1:-1]  # skip the first and the last special token, note: we keep the [SEP] token.
+                    expanded_passage = tokenizer.decode(expanded_passage)
 
                 temp = {
                     "pid": pids[COUNTER],
