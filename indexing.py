@@ -1,7 +1,7 @@
 import torch
 from transformers import BertLMHeadModel, BertTokenizerFast
 from tqdm import tqdm
-from scripts.utility import clean_vacab, load_run, load_collection, get_batch_text
+from tools import get_stop_ids, load_run, load_collection, get_batch_text
 import numpy as np
 import pickle
 import h5py
@@ -24,12 +24,12 @@ def main(args):
         dt_token_id = h5py.vlen_dtype(np.dtype('int16'))
         dt_embedding = np.dtype((np.float16, (30522,)))
         dt_compound = np.dtype([('embedding', dt_embedding), ('token_ids', dt_token_id)])
-        f = h5py.File(args.output_path+"passage_embeddings.hdf5", "w")
+        f = h5py.File(os.path.join(args.output_path, "passage_embeddings.hdf5"), "w")
 
-    model = BertLMHeadModel.from_pretrained(args.ckpt_path, cache_dir=".cache").eval().to(DEVICE)
+    model = BertLMHeadModel.from_pretrained(args.ckpt_path_or_name, cache_dir=".cache").eval().to(DEVICE)
     tokenizer = BertTokenizerFast.from_pretrained('bert-base-uncased', cache_dir=".cache")
-    good_ids, bad_ids = clean_vacab(tokenizer)
-    bad_ids = set(bad_ids)
+    stop_ids = get_stop_ids(tokenizer)
+
 
     batch_size = args.batch_size
     num_docs = len(docids)
@@ -51,7 +51,7 @@ def main(args):
         passage_token_ids = tokenizer(batch_text, add_special_tokens=False)["input_ids"]
         cleaned_ids = []
         for passage_token_id in passage_token_ids:
-            cleaned_passage_token_id = [id for id in passage_token_id if id not in bad_ids]
+            cleaned_passage_token_id = [id for id in passage_token_id if id not in stop_ids]
             cleaned_passage_token_id = np.array(cleaned_passage_token_id).astype(np.int16)
             cleaned_ids.append(cleaned_passage_token_id)
         cleaned_passage_token_ids = cleaned_ids
@@ -74,13 +74,13 @@ def main(args):
             if args.run_path:
                 doc_embeddings[docid] = (passage_log_probs[inbatch_id], cleaned_passage_token_ids[inbatch_id])
             else:
-                assert docno == docid
+                assert str(docno) == docid
                 doc = (passage_log_probs[inbatch_id], cleaned_passage_token_ids[inbatch_id])
                 dset[docno] = doc
                 docno += 1
 
     if args.run_path:
-        with open(args.output_path+"passage_embeddings.pkl", 'wb') as handle:
+        with open(os.path.join(args.output_path, "passage_embeddings.pkl"), 'wb') as handle:
             pickle.dump(doc_embeddings, handle, protocol=pickle.HIGHEST_PROTOCOL)
     else:
         f.close()
@@ -88,10 +88,10 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--ckpt_path", type=str, default="ielab/TILDE")
+    parser.add_argument("--ckpt_path_or_name", type=str, default="ielab/TILDE")
     parser.add_argument("--run_path", type=str)
-    parser.add_argument("--collection_path", type=str, default="./data/collection.tsv")
-    parser.add_argument("--output_path", type=str, default="./data/index/")
+    parser.add_argument("--collection_path", type=str, default="./data/collection/collection.tsv")
+    parser.add_argument("--output_path", type=str, default="./data/index/TILDE")
     parser.add_argument("--batch_size", type=int, default=64)
     args = parser.parse_args()
 

@@ -1,7 +1,7 @@
 import torch
 from transformers import BertLMHeadModel, BertTokenizerFast
 from tqdm import tqdm
-from scripts.utility import clean_vacab, load_run, load_queries
+from tools import get_stop_ids, load_run, load_queries
 import numpy as np
 from timeit import default_timer as timer
 import h5py
@@ -19,8 +19,7 @@ def main(args):
     run = load_run(args.run_path)
     model = BertLMHeadModel.from_pretrained(args.ckpt_path, cache_dir=".cache").eval().to(DEVICE)
     tokenizer = BertTokenizerFast.from_pretrained('bert-base-uncased', cache_dir=".cache")
-    _, bad_ids = clean_vacab(tokenizer)  # clean the BERT tokenizer vocabulary
-    bad_ids = set(bad_ids)
+    stop_ids = get_stop_ids(tokenizer)  # clean the BERT tokenizer vocabulary
 
     if args.index_path.split('.')[-1] == "pkl":
         with open(args.index_path, 'rb') as handle:
@@ -31,7 +30,7 @@ def main(args):
         doc_file = f['documents']
         for i in tqdm(range(len(doc_file)), desc="loading index....."):
             logs, tids = doc_file[i]
-            doc_embeddings[i] = (logs, tids)
+            doc_embeddings[str(i)] = (logs, tids)
 
     total_tokenizer_time = 0
     total_ranking_time = 0
@@ -42,7 +41,7 @@ def main(args):
 
         tokenizer_start = timer()
         query_token_ids = tokenizer(query, add_special_tokens=False)["input_ids"]
-        cleaned_query_token_ids = [id for id in query_token_ids if id not in bad_ids]  # only keep valid token ids
+        cleaned_query_token_ids = [id for id in query_token_ids if id not in stop_ids]  # only keep valid token ids
 
         if args.alpha != 1:
             query_inputs = tokenizer([query], return_tensors="pt", padding=True, truncation=True)
@@ -111,7 +110,7 @@ def main(args):
     print("Query processing time: %.1f ms" % (1000 * total_tokenizer_time / len(run.keys())))
     print("passage re-ranking time: %.1f ms" % (1000 * total_ranking_time / len(run.keys())))
 
-    with open(args.output_path+f"TILDE_alpha{args.alpha}.res", "w") as f:
+    with open(args.save_path, "w") as f:
         f.writelines(lines)
 
 
@@ -120,14 +119,17 @@ if __name__ == '__main__':
     parser.add_argument("--run_path", type=str, required=True)
     parser.add_argument("--index_path", type=str, required=True)
     parser.add_argument("--query_path", type=str, required=True)
+    parser.add_argument('--save_path', type=str, required=True)
     parser.add_argument("--alpha", type=float, default=1)
     parser.add_argument("--cut_off", type=int, default=1000)
     parser.add_argument("--ckpt_path", type=str, default="ielab/TILDE")
     parser.add_argument("--collection_path", type=str, default="./data/collection.tsv")
-    parser.add_argument("--output_path", type=str, default="./data/runs/")
     args = parser.parse_args()
 
-    if not os.path.exists(args.output_path):
-        os.makedirs(args.output_path)
+    if os.path.isdir(args.save_path):
+        raise ValueError("save_path requires full path to the output file name")
 
+    save_dir = os.path.dirname(args.save_path)
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
     main(args)

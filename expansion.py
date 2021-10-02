@@ -82,7 +82,7 @@ def main(args):
     model = BertLMHeadModel.from_pretrained("ielab/TILDE", cache_dir='./cache')
     tokenizer = BertTokenizer.from_pretrained('bert-base-uncased', use_fast=True, cache_dir='./cache')
     model.eval().to(DEVICE)
-    with open(f"{os.path.dirname(args.corpus_path)}/collection-tilde-expanded-top{args.topk}.jsonl", 'w+') as wf:
+    with open(os.path.join(args.output_dir, f"collection-tilde-expanded-top{args.topk}.jsonl"), 'w+') as wf:
         _, bad_ids = clean_vacab(tokenizer)
 
         encode_dataset = MarcoEncodeDataset(args.corpus_path, tokenizer)
@@ -132,11 +132,15 @@ def main(args):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument('--corpus_path', required=True)
-    parser.add_argument('--topk', default=128, type=int, help='k tokens with highest likelihood to be expanded to the original document. '
+    parser.add_argument("--output_dir", required=True)
+    parser.add_argument('--topk', default=200, type=int, help='k tokens with highest likelihood to be expanded to the original document. '
                                                               'NOTE: this is the number before filtering out expanded tokens that already in the original document')
-    parser.add_argument('--batch_size', default=256, type=int)
+    parser.add_argument('--batch_size', default=64, type=int)
     parser.add_argument('--num_workers', default=8, type=int)
     parser.add_argument('--store_raw', action='store_true', help="True if you want to store expanded raw text. False if you want to expanded store token ids.")
     args = parser.parse_args()
+
+    if not os.path.exists(args.output_dir):
+        os.makedirs(args.output_dir)
 
     main(args)

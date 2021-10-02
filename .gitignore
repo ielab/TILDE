@@ -130,3 +130,6 @@ dmypy.json
 data/index/
 data/collection/
 cache/
+.DS_Store
+.idea/
+tildev2-tilde200-exp/
