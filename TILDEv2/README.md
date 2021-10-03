@@ -37,7 +37,9 @@ It will generate another run file in `./data/runs/` and also will print the quer
 Query processing time: 0.1 ms
 passage re-ranking time: 20.5 ms
 ```
-In our case, we use an intel cpu version of Mac mini without cuda library, this means we do not use any gpu in this example. TILDEv2 only uses 0.1ms to compute the query sparse representation and 20.5ms to re-rank 1000 passages retrieved by BM25. We note if use smaller `--topk` for passage expansion the query latency will be smaller. 
+In our case, we use an intel cpu version of Mac mini without cuda library, this means we do not use any gpu in this example. TILDEv2 only uses 0.1ms to compute the query sparse representation and 20.5ms to re-rank 1000 passages retrieved by BM25. If use smaller `--topk` for passage expansion the query latency will be smaller. In our paper, we reproted latency of docTquery-T5 passage expansion which latency is similar to `--topk 128`. 
+
+We note, the direct index in the `inferencev2.py` script is implemented with python built-in dictionary, which is memory inefficient (requires around 40G memory to build the index for the whole collection). If you don't have big enough memory, you can try to use `inferencev2_memory_efficient.py` with the same configs. This inference code creates direct posting lists 'on-the-fly', but of couse has higher query latency.
 
 Now let's evaluate the TILDEv2 run:
 
