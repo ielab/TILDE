@@ -52,7 +52,7 @@ we get:
 map                     all     0.4595
 ndcg_cut_10             all     0.6747
 ```
-This means, with only 0.1ms + 20.5ms add on BM25, TILDEv2 can improve the performance quite a bit. We note the ndcg@10 score is improved by ~16% over the original TILDE.
+This means, with only 0.1ms + 20.5ms add on BM25, TILDEv2 can improve the performance quite a bit. We note the ndcg@10 score is improved by ~16% over the original TILDE. We observe the results are little bit different between `inferencev2.py` and `inferencev2_memory_efficient.py`.
 
 
 ## To train TILDEv2
