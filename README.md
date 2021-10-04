@@ -20,7 +20,8 @@ Please ignore this warning, because we indeed will use TILDE as a standalone but
 ## Updates
 - 13/09/2021 Release the reproducing of uniCOIL with [TILDE passage expansion](#passage-expansion-with-tilde) and add [TILDEv2](TILDEv2) folder.
 - 17/09/2021 Release the code for [TILDE passage expansion](#passage-expansion-with-tilde).
-- 02/10/2021 Release the code for inferencing [TILDEv2](TILDEv2).
+- 02/10/2021 Release the code for [inferencing TILDEv2](TILDEv2).
+- 04/10/2021 Release the code for [training TILDE](#to-train-tilde).
 
 
 ## Prepare environment and data folder
@@ -151,4 +152,20 @@ For impact of `--topk`, we refere to the experiments described in our [paper](ht
 - To reproduce TILDEv2 results with TILDE passage expansion, check out the instructions in[`/TILDEv2`](TILDEv2) folder.
 
 ## To train TILDE
-To be available soon
+We use the same training data as used for training [docTTTTTquery](https://github.com/castorini/docTTTTTquery) where each line in the dataset are relevant document-query pair separated by `/t`.
+
+Frist, download the training data (`doc_query_pairs.train.tsv`) from the original docTTTTTquery [repo](https://www.dropbox.com/s/5i64irveqvvegey/doc_query_pairs.train.tsv?dl=1). This dataset contains approximately 500,000 passage-query pairs used to train the model.
+
+After you downloaded the training dataset, then simply run the following command to kick off the training:
+
+```
+python3 train_tilde.py \
+--train_path path/to/doc_query_pairs.train.tsv \
+--save_path tilde_ckpts \
+--gradient_checkpoint
+```
+
+Note, we use `--gradient_checkpoint` flag to trade off training speed for larger batch size, if you have GPU with big memory, consider removing this flag for faster training.
+
+
+
