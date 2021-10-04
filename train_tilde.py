@@ -8,6 +8,7 @@ from pytorch_lightning import loggers as pl_loggers
 from argparse import ArgumentParser
 from torch.utils.data import Dataset, DataLoader
 from modeling import TILDE
+import os
 
 
 MODEL_TYPE = 'bert-base-uncased'
@@ -33,7 +34,7 @@ class CheckpointEveryEpoch(pl.Callback):
         """ Check if we should save a checkpoint after every train epoch """
         epoch = trainer.current_epoch
         if epoch >= self.start_epoc:
-            ckpt_path = f"{self.save_path}_e{epoch}.ckpt"
+            ckpt_path = os.path.join(self.save_path, f"epoch_{epoch+1}.ckpt")
             trainer.save_checkpoint(ckpt_path)
 
 
