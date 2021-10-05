@@ -125,7 +125,7 @@ def collate_fn(batch):
 
 
 def main(args):
-    # seed_everything(313)
+    seed_everything(313)
     tb_logger = pl_loggers.TensorBoardLogger('logs/'.format(MODEL_TYPE))
 
     model = TILDE(MODEL_TYPE, gradient_checkpointing=args.gradient_checkpoint)
@@ -147,8 +147,9 @@ def main(args):
                       callbacks=[CheckpointEveryEpoch(0, args.save_path)]
                       )
     trainer.fit(model, loader)
-    trainer.save_checkpoint(args.save_path)
-    model.save(args.save_path)
+    print("Saving the final checkpoint as a huggingface model...")
+    model_to_save = TILDE.load_from_checkpoint(model_type=MODEL_TYPE, checkpoint_path=os.path.join(args.save_path, 'epoch_10.ckpt'))
+    model_to_save.save(os.path.join(args.save_path, 'TILDE'))
 
 
 if __name__ == '__main__':

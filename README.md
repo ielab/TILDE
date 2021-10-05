@@ -44,7 +44,8 @@ First, run the following command from the root:
 python3 indexing.py \
 --ckpt_path_or_name ielab/TILDE \
 --run_path ./data/runs/run.trec2019-bm25.res \
---collection_path path/to/collection.tsv
+--collection_path path/to/collection.tsv \
+--output_path ./data/index/TILDE
 ```
 If you have a gpu with big memory, you can set `--batch_size` that suits your gpu the best.
 
@@ -55,7 +56,8 @@ If you want to index the whole collection, simply run:
 ```
 python3 indexing.py \
 --ckpt_path_or_name ielab/TILDE \
---collection_path path/to/collection.tsv
+--collection_path path/to/collection.tsv \
+--output_path ./data/index/TILDE
 ```
 ### Re-rank BM25 results.
 After you got the index, now you can use TILDE to re-rank BM25 results.
@@ -165,7 +167,7 @@ python3 train_tilde.py \
 --gradient_checkpoint
 ```
 
-Note, we use `--gradient_checkpoint` flag to trade off training speed for larger batch size, if you have GPU with big memory, consider removing this flag for faster training.
+Note, we use `--gradient_checkpoint` flag to trade off training speed for larger batch size, if you have GPU with big memory, consider removing this flag for faster training. Pytorch-lightning model checkpoints will be saved after each epoch and the final checkpoint will be converted and saved as a Huggingface model.
 
 
 
