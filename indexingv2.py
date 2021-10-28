@@ -7,7 +7,7 @@ import h5py
 import os
 from tools import get_stop_ids
 from transformers import AutoTokenizer, PreTrainedTokenizer, BatchEncoding, DataCollatorWithPadding
-from modeling import TILDEv2
+from modelingv2 import TILDEv2
 from torch.utils.data import Dataset, DataLoader
 
 DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
