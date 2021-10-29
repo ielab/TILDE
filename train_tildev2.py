@@ -174,7 +174,9 @@ def main():
     tokenizer = AutoTokenizer.from_pretrained(args.model_name,
                                               cache_dir=args.cache_dir,
                                               use_fast=False)
-    model = TILDEv2(config, train_group_size=args.train_group_size)
+    model = TILDEv2.from_pretrained(args.model_name, config=config,
+                                    train_group_size=args.train_group_size,
+                                    cache_dir=args.cache_dir)
     train_dataset = GroupedMarcoTrainDataset(path_to_tsv=args.train_path,
                                              p_max_len=args.p_max_len,
                                              q_max_len=args.q_max_len,

@@ -26,7 +26,7 @@ def main(args):
     direct_index = {}
 
     for i, docid in tqdm(enumerate(docids), desc="Creating direct index....."):
-        assert i == int(docid)
+        # assert i == int(docid)
         token_scores, token_ids = doc_file[i]
         assert len(token_scores) == len(token_ids)
         direct_index[docid] = {}
