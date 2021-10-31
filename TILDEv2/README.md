@@ -56,4 +56,38 @@ This means, with only 0.1ms + 20.5ms add on BM25, TILDEv2 can improve the perfor
 
 
 ## To train TILDEv2
-To be available soon
+TILDEv2 is trained on expanded passages and negatives sampled from BM25 top documents. We share the same training data with [uniCOIL](https://github.com/luyug/COIL/tree/main/uniCOIL) which is also trained on expanded passages.
+
+First, make sure you have followed this [instuction](../README.md/#passage-expansion-with-tilde) to expand the corpus with TILDE. Let's say you saved the expanded corpus in `./data/collection/expanded`.
+
+Then, download the training dataset (`psg-train-d2q`) provided by uniCOIL with this [link](https://www.dropbox.com/s/j1vp1nixn3n2yv0/psg-train-d2q.tar.gz?dl=0). Note, the passages in this training set are expanded with docTquery-T5. You absolutely can directly train TILDEv2 with this training set, however, in this example, we will use passages expanded with TILDE. Run the following command to replace docTquery-T5 expanded passage in the training set with TILDE expanded passages:
+
+```
+python3 create_psg_train_with_tilde.py \
+--psg_train_dir path/to/psg-train-d2q \
+--tilde_corpus_dir ./data/collection/expanded \
+--output_dir psg-train-tilde
+```
+
+After you generate the training set (`psg-train-tilde`), to train TILDEv2, run:
+
+```
+python train_tildev2.py \
+  --output_dir model_tildev2 \
+  --model_name bert-base-uncased \
+  --save_steps 50000 \
+  --train_dir path/to/psg-train-tilde \
+  --q_max_len 16 \
+  --p_max_len 192 \
+  --fp16 \
+  --per_device_train_batch_size 8 \
+  --train_group_size 8 \
+  --warmup_ratio 0.1 \
+  --learning_rate 5e-6 \
+  --num_train_epochs 5 \
+  --overwrite_output_dir \
+  --dataloader_num_workers 16 \
+  --cache_dir ./cache
+```
+
+In our experiments, we use the last checkpoint as our final model.

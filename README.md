@@ -18,10 +18,11 @@ If you want to use `BertLMHeadModel` as a standalone, add `is_decoder=True`.
 Please ignore this warning, because we indeed will use TILDE as a standalone but still treat it as a transformer encoder.
 
 ## Updates
-- 13/09/2021 Release the reproducing of uniCOIL with [TILDE passage expansion](#passage-expansion-with-tilde) and add [TILDEv2](TILDEv2) folder.
+- 13/09/2021 Release the reproducing of uniCOIL with [TILDE passage expansion](#passage-expansion-with-tilde).
 - 17/09/2021 Release the code for [TILDE passage expansion](#passage-expansion-with-tilde).
 - 02/10/2021 Release the code for [inferencing TILDEv2](TILDEv2).
 - 04/10/2021 Release the code for [training TILDE](#to-train-tilde).
+- 31/10/2021 Release the code for [training TILDEv2](TILDEv2/README.md/#to-train-tildev2).
 
 
 ## Prepare environment and data folder
