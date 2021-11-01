@@ -5,7 +5,7 @@ Matching and Efficient Passage Expansion.](https://arxiv.org/pdf/2108.08513)
 ## Passage re-ranking with TILDEv2
 Unlike original TILDE which pre-computes term weights over all the BERT vocabulary, TILDEv2 only computes term weights with expanded passages. This requires to only store in the index the score of terms that appear in the expanded passages (rather than all the vocabulary), thus producing indexes that are 99% smaller than those of TILDE.
 
-To try out passage ranking with TILDEv2 on MS MARCO passage ranking task, you need to first expand the whole MS MARCO passage collection. We adapt TILDE as a passage expansion model to do the job. Please following the instructions in [TILDE READEME](../README.md/#passage-expansion-with-tilde). Note, the TILDEv2 model used in this example are trained with TILDE expansion with `m=200` (see section5.4 in our [paper](https://arxiv.org/pdf/2108.08513)). Hence make sure you set `--topk 200` for TILDE passage expension.
+To try out passage ranking with TILDEv2 on MS MARCO passage ranking task, you need to first expand the whole MS MARCO passage collection. We adapt TILDE as a passage expansion model to do the job. Please follow the instructions in [TILDE READEME](../README.md/#passage-expansion-with-tilde). Note, the TILDEv2 model used in this example is trained with TILDE expansion with `m=200` (see section5.4 in our [paper](https://arxiv.org/pdf/2108.08513)). Hence make sure you set `--topk 200` for TILDE passage expension.
 
 ### Indexing the collection
 
@@ -18,7 +18,7 @@ python3 indexingv2.py \
 ```
 If you have a gpu with big memory, you can set `--batch_size` that suits your gpu the best.
 
-This command will create a `.hdf5` file that stores contextulized term weights of expanded MS MARCO passages and a `.npy` file that stores document ids in the folder `./data/index/TILDEv2`. Compare to TILDE index file which is more than 500GB, TILDEv2 only requries around 4GB.
+This command will create a `.hdf5` file that stores contextulized term weights of expanded MS MARCO passages and a `.npy` file that stores document ids in the folder `./data/index/TILDEv2`. Compared to TILDE index file which is more than 500GB, TILDEv2 only requries around 4GB.
 
 
 ### Re-rank BM25 results.
@@ -52,7 +52,7 @@ we get:
 map                     all     0.4595
 ndcg_cut_10             all     0.6747
 ```
-This means, with only 0.1ms + 20.5ms add on BM25, TILDEv2 can improve the performance quite a bit. We note the ndcg@10 score is improved by ~16% over the original TILDE. We observe the results are little bit different between `inferencev2.py` and `inferencev2_memory_efficient.py`.
+This means, with only 0.1ms + 20.5ms add on BM25, TILDEv2 can improve the performance quite a bit. We note the ndcg@10 score is improved by ~16% over the original TILDE. We observe the results are a little bit different between `inferencev2.py` and `inferencev2_memory_efficient.py`.
 
 
 ## To train TILDEv2
