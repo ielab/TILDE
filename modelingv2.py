@@ -83,6 +83,7 @@ class TILDEv2(PreTrainedModel):
         qry_attention_mask.scatter_(1, sep_pos.long(), _zeros)
         return qry_attention_mask
 
+    # This function credits to Luyu gao: https://github.com/luyug/COIL/blob/main/modeling.py
     def compute_tok_score_cart(self, doc_reps, doc_input_ids, qry_reps, qry_input_ids, qry_attention_mask):
         qry_input_ids = qry_input_ids.unsqueeze(2).unsqueeze(3)  # Q * LQ * 1 * 1
         doc_input_ids = doc_input_ids.unsqueeze(0).unsqueeze(1)  # 1 * 1 * D * LD
@@ -94,7 +95,6 @@ class TILDEv2(PreTrainedModel):
         )
         scores_no_masking = scores_no_masking.view(
             *qry_reps.shape[:2], *doc_reps.shape[:2])  # Q * LQ * D * LD
-        # scores_no_masking = scores_no_masking.permute(0, 2, 1, 3)  # Q * D * LQ * LD
 
         scores, _ = (scores_no_masking * exact_match).max(dim=3)  # Q * LQ * D, max pooling
         tok_scores = (scores * qry_attention_mask.unsqueeze(2))[:, 1:].sum(1)
@@ -102,6 +102,7 @@ class TILDEv2(PreTrainedModel):
         return tok_scores
 
 
+# credit to Luyu gao: https://github.com/luyug/COIL/blob/main/trainer.py
 class TILDEv2Trainer(Trainer):
     def _save(self, output_dir: Optional[str] = None):
         output_dir = output_dir if output_dir is not None else self.args.output_dir
