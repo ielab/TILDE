@@ -1,6 +1,9 @@
 # TILDE
 This is the official repository for the SIGIR2021 paper [TILDE: Term Independent Likelihood moDEl for Passage Re-ranking](http://ielab.io/publications/arvin-2021-TILDE).
 
+And the official repository for our arxiv paper [Fast Passage Re-ranking with Contextualized Exact Term
+Matching and Efficient Passage Expansion.](https://arxiv.org/pdf/2108.08513)
+
 
 TILDE now is on huggingface model hub. You can directly download and use it by typing in your Python code:
 
