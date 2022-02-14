@@ -30,9 +30,12 @@ def main(args):
 
     f = h5py.File(os.path.join(args.index_path, "tildev2_index.hdf5"), 'r')
     doc_file = f['documents'][:]  # load the hdf5 file to the memory.
-    docids = np.load(os.path.join(args.index_path, "docids.npy"))
+    all_docids = np.load(os.path.join(args.index_path, "docids.npy"))
+    docid_map = {}
+    for i, docid in tqdm(enumerate(all_docids), desc="Creating internal docid map....."):
+        docid_map[docid] = i
 
-    assert len(docids) == len(doc_file)
+    assert len(all_docids) == len(doc_file)
     direct_index = doc_file
     total_tokenizer_time = 0
     total_ranking_time = 0
@@ -63,9 +66,9 @@ def main(args):
         for rank, docid in enumerate(docids):
             if rank == args.cut_off:
                 break
-            token_socres = get_token_weights(cleaned_query_token_ids, int(docid), direct_index)
-            doc_score = np.sum(token_socres)
+            doc_score = np.sum(get_token_weights(cleaned_query_token_ids, docid_map[docid], direct_index))
             scores.append(doc_score)
+
         zipped_lists = zip(scores, docids[:len(scores)])
         sorted_pairs = sorted(zipped_lists, reverse=True)
 
