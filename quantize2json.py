@@ -19,7 +19,9 @@ class uniform_quantizer:
     def quantize(self, score):
         return int((score / self.max_impact) * self.qmax)
 
-
+def generate_json(docid, vector):
+    return json.dumps({"id": docid, "contents": "", "vector": vector}, ensure_ascii=False)
+ 
 
 def main(args):
 
@@ -54,7 +56,8 @@ def main(args):
         for term in direct_index[docid]:
             score = direct_index[docid][term]
             direct_index[docid][term] = quantizer.quantize(score)
-        json.dump(direct_index[docid], out_file, ensure_ascii=False)
+        vector = json.dumps(direct_index[docid], ensure_ascii=False)
+        out_file.write(generate_json(docid, vector))
         out_file.write('\n')
     
     out_file.close()
