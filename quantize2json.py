@@ -37,7 +37,6 @@ def main(args):
 
     max_token_impact = 0
     for i, docid in tqdm(enumerate(docids), desc="Creating direct index....."):
-        # assert i == int(docid)
         token_scores, token_ids = doc_file[i]
         assert len(token_scores) == len(token_ids)
         direct_index[docid] = {}
@@ -56,7 +55,6 @@ def main(args):
         for term in direct_index[docid]:
             score = direct_index[docid][term]
             direct_index[docid][term] = quantizer.quantize(score)
-        #vector = json.dumps(direct_index[docid], ensure_ascii=False)
         out_file.write(generate_json(docid, direct_index[docid]))
         out_file.write('\n')
     
