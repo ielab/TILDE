@@ -56,8 +56,8 @@ def main(args):
         for term in direct_index[docid]:
             score = direct_index[docid][term]
             direct_index[docid][term] = quantizer.quantize(score)
-        vector = json.dumps(direct_index[docid], ensure_ascii=False)
-        out_file.write(generate_json(docid, vector))
+        #vector = json.dumps(direct_index[docid], ensure_ascii=False)
+        out_file.write(generate_json(docid, direct_index[docid]))
         out_file.write('\n')
     
     out_file.close()
