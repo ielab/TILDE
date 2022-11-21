@@ -58,7 +58,7 @@ pisa/build/bin/lexicon build pisa-canonical/bp-tildev2.terms pisa-index/bp-tilde
 
 ### 7. Get the queries
 ```
-python3 dump_queries.py --query_path data/queries/DL2019-queries.tsv | sed -e's/\t/ /' > DL2019-tilde.query|
+python3 dump_queries.py --query_path=data/queries/DL2019-queries.tsv | sed -e's/\t/ /' > DL2019-tilde.query
 ```
 
 We also need to convert the BERT tokens to PISA index offsets; this is because PISA cannot currently parse BERT tokens :-(
@@ -70,9 +70,29 @@ awk -F" " 'NR==FNR{a[$1]=i++;next}{printf $1":"; for(i=2; i <= NF; ++i){printf "
 Get a TREC run out:
 ```
 pisa/build/bin/evaluate_queries -e block_simdbp -i pisa-index/bp-tildev2.block_simdbp.idx -w pisa-index/bp-tildev2.fixed-40.bmw -s quantized -k 1000 -q  DL2019-tilde.pisa -a maxscore --documents pisa-index/bp-tildev2.doclex > tilde-v2.run
+
+trec_eval -m ndcg_cut.10 -m map data/qrels/2019qrels-pass.txt tilde-v2.run
+map                   	all	0.4262
+ndcg_cut_10           	all	0.6527
+
 ```
+
 Do some latency measurement:
 ```
 pisa/build/bin/queries -e block_simdbp -i pisa-index/bp-tildev2.block_simdbp.idx -w pisa-index/bp-tildev2.fixed-40.bmw -s quantized -k 1000 -q  DL2019-tilde.pisa -a maxscore
+[2022-11-21 05:55:47.507] [stderr] [info] Loading index from pisa-index/bp-tildev2.block_simdbp.idx
+[2022-11-21 05:55:47.856] [stderr] [info] Warming up posting lists
+[2022-11-21 05:55:47.953] [stderr] [info] Performing block_simdbp queries
+[2022-11-21 05:55:47.953] [stderr] [info] K: 1000
+[2022-11-21 05:55:47.953] [stderr] [info] Query type: maxscore
+[2022-11-21 05:55:47.953] [stderr] [info] Safe: false
+[2022-11-21 05:55:56.337] [stderr] [info] ---- block_simdbp maxscore
+[2022-11-21 05:55:56.337] [stderr] [info] Mean: 14005.7
+[2022-11-21 05:55:56.337] [stderr] [info] 50% quantile: 9552
+[2022-11-21 05:55:56.337] [stderr] [info] 90% quantile: 29059
+[2022-11-21 05:55:56.337] [stderr] [info] 95% quantile: 42783
+[2022-11-21 05:55:56.337] [stderr] [info] 99% quantile: 69769
+[2022-11-21 05:55:56.337] [stderr] [info] Num. reruns: 0
+{"type": "block_simdbp", "query": "maxscore", "avg": 14005.7, "q50": 9552, "q90": 29059, "q95": 42783, "q99": 69769}
 
 ```
