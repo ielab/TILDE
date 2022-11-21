@@ -19,7 +19,9 @@ class uniform_quantizer:
     def quantize(self, score):
         return int((score / self.max_impact) * self.qmax)
 
-
+def generate_json(docid, vector):
+    return json.dumps({"id": docid, "contents": "", "vector": vector}, ensure_ascii=False)
+ 
 
 def main(args):
 
@@ -35,7 +37,6 @@ def main(args):
 
     max_token_impact = 0
     for i, docid in tqdm(enumerate(docids), desc="Creating direct index....."):
-        # assert i == int(docid)
         token_scores, token_ids = doc_file[i]
         assert len(token_scores) == len(token_ids)
         direct_index[docid] = {}
@@ -54,7 +55,7 @@ def main(args):
         for term in direct_index[docid]:
             score = direct_index[docid][term]
             direct_index[docid][term] = quantizer.quantize(score)
-        json.dump(direct_index[docid], out_file, ensure_ascii=False)
+        out_file.write(generate_json(docid, direct_index[docid]))
         out_file.write('\n')
     
     out_file.close()
